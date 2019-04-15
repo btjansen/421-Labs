@@ -1,0 +1,8 @@
+{ "dictionary_name" : "example",
+      "entries":
+      [{
+        "key": ["example"],
+        "answer": ["example answer"],
+        "question": ["example question"]
+      }]
+    }

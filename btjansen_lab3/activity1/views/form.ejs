@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Online Calculator</title>
+</head>
+<body>
+	<h1>Calculator</h1>
+	<p><% for(var i=0; i<stackEJS.length; i++) {%>
+   		<b>Operation:</b> <%= stackEJS[i][0] %> <%= stackEJS[i][1] %>  <b>IP:</b> <%= stackEJS[i][2] %> <b>User-Agent:</b> <%= stackEJS[i][3] %><br></br>
+		<% } %></p><br></br>
+	<p><b>Current Value:</b> <%= currentVal %></p><br></br>
+	<form name="CalcForm" method="post">
+        	Number:<input type = "text" name = "value" value ="<%= number %>"/><br></br>
+            <button type="submit" formaction="/add">Add</button>
+            <button type="submit" formaction="/subtract">Subtract</button>
+            <button type="submit" formaction="/pop">Pop</button>
+	</form>
+
+</body>
+</html>

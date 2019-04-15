@@ -1,0 +1,234 @@
+<html>
+    <head>
+        
+    </head>
+
+        <body>
+
+        <p id = "error"><br/></p>
+        
+        <p>Current Stack: </p><p id = "stack"><br/></p>
+        <p>Current Value: </p><p id = "value"></p>
+        <p>
+        Enter number: <input type="text" id="numparam" name="number" /><br/> 
+        <input id = "add" type="submit" value="Add" name="add" onClick="add()" /><input id = "subtract" type="submit" value="Subtract" name="sub" onClick="subtract()" />
+        <input type="submit" value="Pop" name="pop" onClick="pop()" /><input type="submit" value="Reset" name="reset" onClick="reset()" />
+        <br/>
+        </p>
+
+    </body>
+    
+    <script>
+    
+        //Function for when the add button is clicked
+        function add(){
+
+            //Reads input value and clears previous unused sections of the HTML
+            let number = document.getElementById('numparam').value;
+
+            document.getElementById("error").innerHTML = "";
+            document.getElementById("numparam").value = "";
+
+            //New AJAX request sent to server
+            let req = new XMLHttpRequest();
+            req.open('POST', 'http://localhost:8088/add');
+        
+            //On response will identify status code and either update the current value or display the returned error code
+            req.onreadystatechange = function() {
+
+               if ( req.readyState === 4 ) {
+
+                 if ( req.status === 200 ) {
+
+                   let resJson = JSON.parse(req.responseText);
+
+                   document.getElementById("value").innerHTML = resJson.value;
+
+                 } else { // handle request failure
+
+                    console.log('Status: ' + req.status);
+
+                    let resJson = JSON.parse(req.responseText);
+
+                    document.getElementById("error").innerHTML = "ERROR! " + resJson.error;
+
+                 }
+
+               }
+
+       }
+            req.send('{ \"number\" : \"' + number + '\"}');
+
+            //Calls history() to send another AJAX request to get the current stack
+            history();
+
+            return req;
+        }
+    
+        //Function for when the subtract button is clicked
+        function subtract(){
+
+            //Gets the input
+            let number = document.getElementById('numparam').value;
+
+            //Reads input value and clears previous unused sections of the HTML
+            document.getElementById("error").innerHTML = "";
+            document.getElementById("numparam").value = "";
+
+            //Creates a new AJAX request
+            let req = new XMLHttpRequest();
+            req.open('POST', 'http://localhost:8088/subtract');
+        
+            //On response will identify status code and either update the current value or display the returned error code
+            req.onreadystatechange = function() {
+
+               if ( req.readyState === 4 ) {
+
+                 if ( req.status === 200 ) {
+
+                   let resJson = JSON.parse(req.responseText);
+
+                   document.getElementById("value").innerHTML = resJson.value;
+
+                 } else { // handle request failure
+
+                    console.log('Status: ' + req.status);
+
+                    let resJson = JSON.parse(req.responseText);
+
+                    document.getElementById("error").innerHTML = "ERROR! " + resJson.error;
+
+                 }
+
+               }
+
+           }
+                req.send('{ \"number\" : \"' + number + '\"}');
+
+                //Calls history() to send another AJAX request to get the current stack
+                history();
+
+                return req;
+            }
+
+        //Function for when the pop button is clicked
+        function pop(){
+
+            //Reads input value and clears previous unused sections of the HTML
+            document.getElementById("error").innerHTML = "";
+            document.getElementById("numparam").value = "";
+
+            //Create a new AJAX request to send to the server
+            let req = new XMLHttpRequest();
+            req.open('POST', 'http://localhost:8088/pop');
+        
+            //On response will identify status code and either update the current value or display the returned error code
+            req.onreadystatechange = function() {
+
+               if ( req.readyState === 4 ) {
+                 if ( req.status === 200 ) {
+
+                   let resJson = JSON.parse(req.responseText);
+
+                   document.getElementById("value").innerHTML = resJson.value;
+
+                 } else { // handle request failure
+
+                    console.log('Status: ' + req.status);
+
+                    let resJson = JSON.parse(req.responseText);
+
+                    document.getElementById("error").innerHTML = "ERROR! " + resJson.error;
+
+                 }
+
+               }
+
+       }
+            req.send('{ \"number\" : \"' + 0 + '\"}');
+
+            //Calls history() to send another AJAX request to get the current stack
+            history();
+
+            return req;
+        }
+
+        //Function called when the reset button is clicked
+        function reset(){
+            document.getElementById("error").innerHTML = "";
+            document.getElementById("numparam").value = "";
+
+            //Creates a new AJAX request to send to the server
+            let req = new XMLHttpRequest();
+            req.open('GET', 'http://localhost:8088/reset');
+        
+            //On response will identify status code and either update the current value or display the returned error code
+            req.onreadystatechange = function() {
+
+               if ( req.readyState === 4 ) {
+
+                 if ( req.status === 200 ) {
+
+                    //Clears displayed values for the current value and stack
+                   document.getElementById("value").innerHTML = 0;
+                   document.getElementById("stack").innerHTML = [];
+
+                 } else { // handle request failure
+
+                    console.log('Status: ' + req.status);
+
+                    let resJson = JSON.parse(req.responseText);
+
+                    document.getElementById("error").innerHTML = "ERROR! " + resJson.error;
+
+                 }
+
+               }
+
+       }
+            req.send('{ \"number\" : \"' + 0 + '\"}');
+
+            return req;
+        }
+
+        //Function to get the current stack from the server and display it
+        function history(){
+
+            //Creates a new AJAX request
+            let req = new XMLHttpRequest();
+            req.open('GET', 'http://localhost:8088/history');
+        
+            //On response will identify status code and either update the current stack or display the returned error code
+            req.onreadystatechange = function() {
+
+               if ( req.readyState === 4 ) {
+
+                 if ( req.status === 200 ) {
+
+                   let resJson = JSON.parse(req.responseText);
+                   stackString = '';
+                   document.getElementById("stack").innerHTML = JSON.stringify(resJson);
+
+                 } else { // handle request failure
+
+                    console.log('Status: ' + req.status);
+
+                    let resJson = JSON.parse(req.responseText);
+
+                    document.getElementById("error").innerHTML = "ERROR! " + resJson.error;
+
+                 }
+
+               }
+
+       }
+
+            req.send('{ \"number\" : \"' + 0 + '\"}');
+
+            return req;
+        }
+        
+    </script>
+    
+
+</html>

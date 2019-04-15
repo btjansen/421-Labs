@@ -1,0 +1,263 @@
+<html>
+	<head>
+		
+	</head>
+
+	<body>
+
+		<p id = "avgTemp" >The average temperature is: </p>
+		<p id = "hottest" >The hottest city is: </p>
+
+		<h2>Weather Table</h2>
+
+		<table>
+			<tr>
+				<th>City Name</th>
+				<th>Forcast</th>
+				<th>Last Updated</th>
+				<th>Temperature</th>
+				<th>Feels Like</th>
+				<th>Wind Speed</th>
+				<th>Visability</th>
+			</tr>
+			<tr>
+				<td id = "city0" ></td>
+				<td>
+					<input id = "city0BTN" type="submit" value="Forcast" name="city0" onClick="forecast(0)" />
+				</td>
+				<td id = "lastUpdate0" ></td>
+				<td id = "temp0" ></td>
+				<td id = "feelsLike0" ></td>
+				<td id = "windSpd0" ></td>
+				<td id = "vis0" ></td>
+			</tr>
+			<tr>
+				<td id = "city1" ></td>
+				<td>
+					<input id = "city1BTN" type="submit" value="Forcast" name="city1" onClick="forecast(1)" />
+				</td>				
+				<td id = "lastUpdate1" ></td>
+				<td id = "temp1" ></td>
+				<td id = "feelsLike1" ></td>
+				<td id = "windSpd1" ></td>
+				<td id = "vis1" ></td>
+			</tr>
+			<tr>
+				<td id = "city2" ></td>
+				<td>
+					<input id = "city2BTN" type="submit" value="Forcast" name="city2" onClick="forecast(2)" />
+				</td>
+				<td id = "lastUpdate2" ></td>
+				<td id = "temp2" ></td>
+				<td id = "feelsLike2" ></td>
+				<td id = "windSpd2" ></td>
+				<td id = "vis2" ></td>
+			</tr>
+			<tr>
+				<td id = "city3" ></td>
+				<td>
+					<input id = "city3BTN" type="submit" value="Forcast" name="city0" onClick="forecast(3)" />
+				</td>
+				<td id = "lastUpdate3" ></td>
+				<td id = "temp3" ></td>
+				<td id = "feelsLike3" ></td>
+				<td id = "windSpd3" ></td>
+				<td id = "vis3" ></td>
+			</tr>
+			<tr>
+				<td id = "city4" ></td>
+				<td>
+					<input id = "city4BTN" type="submit" value="Forcast" name="city4" onClick="forecast(4)" />
+				</td>
+				<td id = "lastUpdate4" ></td>
+				<td id = "temp4" ></td>
+				<td id = "feelsLike4" ></td>
+				<td id = "windSpd4" ></td>
+				<td id = "vis4" ></td>
+			</tr>
+			<tr>
+				<td id = "city5" ></td>
+				<td>
+					<input id = "city5BTN" type="submit" value="Forcast" name="city5" onClick="forecast(5)" />
+				</td>
+				<td id = "lastUpdate5" ></td>
+				<td id = "temp5" ></td>
+				<td id = "feelsLike5" ></td>
+				<td id = "windSpd5" ></td>
+				<td id = "vis5" ></td>
+			</tr>
+		</table>
+
+		<p>
+			
+			<div id = "maxTemp"></div>
+			<div id = "minTemp"></div>
+			<div id = "avgFutureTemp"></div>
+			<div id = "maxWind"></div>
+			<div id = "totalPrecip"></div>
+			<div id = "avgVis"></div>
+			<div id = "avgHumid"></div>
+			<div id = "condText"></div>
+			<div id = "condIcon"></div>
+			<div id = "condCode"></div>
+			<div id = "uv"></div>
+			<div id = "sunrise"></div>
+			<div id = "sunset"></div>
+			<div id = "moonrise"></div>
+			<div id = "moonset"></div>
+
+
+		</p>
+
+        <p>
+        	<input id = "getWeather" type="submit" value="Refresh" name="getWeather" onClick="load()" />
+        <br/>
+        </p>
+
+
+
+	</body>
+
+	<script>
+
+		//Global variable declarations
+		var averageTemp = 0;
+		var highestTemp = 0;
+		var hottestCity = "";
+
+		//Function to send a fetch request to the server for weather information.
+		//zip is the name or zip of the desired city, i is the number used to display the information in the table
+		function getWeather(zip, i) {
+			var url = "http://api.apixu.com/v1/current.json?key=5d1147cb5705481ba1f213023182111&q=";
+
+			url += zip;
+
+			fetch(url)
+
+			.then((resp) => resp.json())
+
+			.then(function(data) {
+
+				//Fills in the table with the response information
+				document.getElementById('city' + i).innerHTML = data.location.name;
+				document.getElementById('lastUpdate' + i).innerHTML = data.current.last_updated;
+
+				document.getElementById('temp' + i).innerHTML = data.current.temp_c;
+				averageTemp += data.current.temp_c;
+
+				//Tracks the highest temperature recorded among the cities
+				if(highestTemp < data.current.temp_c) {
+					highestTemp = data.current.temp_c;
+					hottestCity = data.location.name;
+
+				}
+
+				document.getElementById('feelsLike' + i).innerHTML = data.current.feelslike_c;
+				document.getElementById('windSpd' + i).innerHTML = data.current.wind_kph;
+				document.getElementById('vis' + i).innerHTML = data.current.vis_km;
+
+			});
+		}
+
+		//Function used to populate the table or to refresh the page
+		function load() {
+			averageTemp = 0;
+			highestTemp = 0;
+			hottestCity = "";
+			getWeather("Phoenix", 0);
+			getWeather("New York", 1);
+			getWeather("London", 2);
+			getWeather("San Francisco", 3);
+			getWeather("Washington DC", 4);
+			getWeather(94549, 5);
+
+
+			setTimeout(calc, 1000);
+
+			document.getElementById('maxTemp').innerHTML = "";
+			document.getElementById('minTemp').innerHTML = "";
+			document.getElementById('avgFutureTemp').innerHTML = "";
+			document.getElementById('maxWind').innerHTML = "";
+			document.getElementById('totalPrecip').innerHTML = "";
+			document.getElementById('avgVis').innerHTML = "";
+			document.getElementById('avgHumid').innerHTML = "";
+			document.getElementById('condText').innerHTML = "";
+			document.getElementById('condIcon').innerHTML = "";
+			document.getElementById('condCode').innerHTML = "";
+			document.getElementById('uv').innerHTML = "";
+			document.getElementById('sunrise').innerHTML = "";
+			document.getElementById('sunset').innerHTML = "";
+			document.getElementById('moonrise').innerHTML = "";
+			document.getElementById('moonset').innerHTML = "";
+
+
+		}
+
+		//Function used to calculate and display the average temperature and the city with the highest temperature
+		function calc() {
+			averageTemp = averageTemp / 6;
+			//console.log(averageTemp);
+			//console.log(highestTemp);
+
+			document.getElementById("avgTemp").innerHTML = "The average temperature is: " + averageTemp;
+			document.getElementById("hottest").innerHTML = "The hottest city is: " + hottestCity;
+		}
+
+		//Function for fetching the forecast data and populating the forcast section
+		function forecast(city) {
+			var url = "http://api.apixu.com/v1/forecast.json?key=5d1147cb5705481ba1f213023182111&q=";
+
+			if(city == 0) {
+				url += "Phoenix";
+			}
+			if(city == 1) {
+				url += "New York";
+			}
+			if(city == 2) {
+				url += "London";
+			}
+			if(city == 3) {
+				url += "San Francisco";
+			}
+			if(city == 4) {
+				url += "Washington DC";
+			}
+			if(city == 5) {
+				url += 94549;
+			}
+
+			url += "&days=1";
+		
+			fetch(url)
+
+			.then((resp) => resp.json())
+
+			.then(function(data) {
+
+				document.getElementById('maxTemp').innerHTML = "Max Temp (C): " + data.forecast.forecastday[0].day.maxtemp_c;
+				document.getElementById('minTemp').innerHTML = "Min Temp (C): " + data.forecast.forecastday[0].day.mintemp_c;
+				document.getElementById('avgFutureTemp').innerHTML = "Average Temp (C): " + data.forecast.forecastday[0].day.avgtemp_c;
+				document.getElementById('maxWind').innerHTML = "Max Wind (kph): " + data.forecast.forecastday[0].day.maxwind_kph;
+				document.getElementById('totalPrecip').innerHTML = "Total Precipitaion (mm): " + data.forecast.forecastday[0].day.totalprecip_mm;
+				document.getElementById('avgVis').innerHTML = "Average Visability (km): " + data.forecast.forecastday[0].day.avgvis_km;
+				document.getElementById('avgHumid').innerHTML = "Average Humidity: " + data.forecast.forecastday[0].day.avghumidity;
+				document.getElementById('condText').innerHTML = "Condition: " + data.forecast.forecastday[0].day.condition.text;
+				document.getElementById('condIcon').innerHTML = "Condition Icon: " + data.forecast.forecastday[0].day.condition.icon;
+				document.getElementById('condCode').innerHTML = "Condition Code: " + data.forecast.forecastday[0].day.condition.code;
+				document.getElementById('uv').innerHTML = "UV: " + data.forecast.forecastday[0].day.uv;
+				document.getElementById('sunrise').innerHTML = "Sunrise: " + data.forecast.forecastday[0].astro.sunrise;
+				document.getElementById('sunset').innerHTML = "Sunset: " + data.forecast.forecastday[0].astro.sunset;
+				document.getElementById('moonrise').innerHTML = "Moonrise: " + data.forecast.forecastday[0].astro.moonrise;
+				document.getElementById('moonset').innerHTML = "Moonset: " + data.forecast.forecastday[0].astro.moonset;
+
+				
+			});
+		}
+
+		//Initial call to load() to load the page
+		load();
+
+
+	</script>
+
+</html>

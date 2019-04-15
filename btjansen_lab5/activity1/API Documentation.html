@@ -1,0 +1,29 @@
+<html>
+    <head>
+        
+    </head>
+
+        <body>
+
+        	<p>API Documentation</p>
+        	<p>API url: http://localhost:8088</p>
+        	<p>API available pages:</p>
+        	<p><b>/add</b>: adds the input value to the current value and stores the operation in the stack</p>
+        	<p>requires: an input value and an operation, either + or -</p>
+        	<p>returns: a JSON object with the form {value: "value"}</br></p>
+        	<p><b>/subtract</b>: subtracts a value from the current value and stores the operation in the stack</p>
+        	<p>requires: an input value and an operation, either + or -</p>
+        	<p>returns: a JSON object with the form {value: "value"}</br></p>
+        	<p><b>/pop</b>: pops off the last operation performed by the stack and changes the current value to match</p>
+        	<p>requires: no input</p>
+        	<p>returns: a JSON object with the form {value: "value"} if the operation succeeds, if the stack is empty returns a 405 status code</p>
+        	<p><b>/reset</b>: clears the stack and resets the current value to "0"</br></p>
+        	<p>requires: no input</p>
+        	<p>returns: a status of 200 if the reset succeeds</p>
+        	<p><b>/history</b>: returns the current stack of operations as a JSON object</p>
+        	<p>requires: no input</p>
+        	<p>returns: a JSON object with the form {stack: "stack"}</br></p>
+
+
+        </body>
+</html>

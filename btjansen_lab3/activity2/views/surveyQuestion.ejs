@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>EJS Template</title>
+</head>
+<body>
+	<h1>Survey page <%= pageNum %> for <%= name %></h1>
+	<p><%= question %></p>	
+	
+	<a href='/render'>Set rendering options</a>
+	
+	<form name="Survey" method="post">
+		<input type="hidden" name="action" value="survey"/>
+		
+		<% for(var i=0; i<answers.length; i++) {%>  		
+   			<INPUT TYPE="radio" NAME="answer" VALUE=<%= i %> checked = "yes"><%= answers[i] %></INPUT>
+   			<% if(rendering == 1) {%>
+   				<br></br>
+   			<% } %>
+		<% } %><br></br>
+		
+		<button type="submit" formaction="/prev">Previous</button>
+		<button type="submit" formaction="/survey">Next</button>
+		
+		
+	</form>
+
+</body>
+</html>

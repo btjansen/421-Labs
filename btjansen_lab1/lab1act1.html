@@ -1,0 +1,53 @@
+<HTML>
+<HEAD><TITLE>A Sample Form Using GET</TITLE></HEAD>
+	<BODY BGCOLOR="#FDF5E6">
+	<H2 ALIGN="CENTER">Lab 1 Activity 1 HTML Page</H2>
+
+		<FORM ACTION="http://lead1.poly.asu.edu/cgi-bin/cgiquery.pl" METHOD="GET">
+			<CENTER>
+
+        Color:
+  		  <input type="color" name="btjansen_color" required> <br/>
+
+  		  Date:
+  		  <input type="date" name="btjansen_date" min="2012-02-01" max="2016-03-01" required> <br/>
+
+  			Datetime-local:
+  			<input type="datetime-local" name="btjansen_datetime-local" required> <br/>
+
+  			Email:
+  			<input type="email" name="btjansen_email" required> <br/>
+
+  			Month:
+  			<input type="month" name="btjansen_month" required> <br/>
+
+  			Number:
+  			<input type="number" name="btjansen_number" value="125" required> <br/>
+
+  			Range:
+        <input type="range" name="btjansen_range" min="-15" max="15" required> <br/>
+
+  			Search:
+  			<input type="search" name="btjansen_search" required> <br/>
+
+  			Telephone:
+  			<input type="tel" name="btjansen_tel" required> <br/>
+
+  			Time:
+  			<input type="time" name="btjansen_time" required> <br/>
+
+  			URL:
+  			<input type="url" name="btjansen_url" required> <br/>
+
+  			Week:
+  			<input type="week" name="btjansen_week" required> <br/>
+
+  			Routing Number:
+  			<input type="text" name="btjansen_RTN" pattern="[[:digit:]]{9}+[ ]+[[:digit:]]{12}+[ ]+[[:digit:]]{4}" size="30" required> <br/>
+
+  			<INPUT TYPE="SUBMIT">
+
+  			</CENTER>
+		</FORM>
+	</BODY>
+</HTML>

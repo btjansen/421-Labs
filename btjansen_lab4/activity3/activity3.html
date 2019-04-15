@@ -1,0 +1,381 @@
+<html>
+    <head>
+        
+    </head>
+    
+    
+    <body>
+        <div id="startPoint"></div>
+        <p id = "echo"></p>
+        <p id = "answer"></p>
+        <p id = "question">Hi, I'm Eliza! What's your name?</p>
+        <form>
+            <input id = "input" type = "text"></input>
+        </form>
+        <button id = "button" onclick = "getName()">Submit</button>
+    </body>
+    
+    <script src="dictionary.js"></script> 
+    <script type ="text/javascript">
+        //setting up the basic dictionary
+        var dictionary = new Dictionary({ "dictionary_name" : "default",
+      "entries":
+      [{
+        "key": ["stupid","dumb","idiot","unintelligent","simple-minded","braindead","foolish","unthoughtful"],
+        "answer": ["Take your attitude somewhere else.", "I don't have time to listen to insults.", "Just because I don't have a large vocabulary doesn't mean I don't have insults installed."],
+        "question": ["Have you thought about how I feel?", "I know you are but what am I?"]
+      },{
+        "key":["unattractive","hideous","ugly"],
+        "answer": ["I don't need to look good to be an AI.","Beauty is in the eye of the beholder.", "I do not even have a physical manifestation!"],
+        "question": ["Did you run a static analysis on me?", "Have you watched the movie Her?", "You do not like my hairdo?"]
+      },{
+        "key":["old","gray-haired"],
+        "answer":["I'm like a fine wine. I get better as I age.","As time goes by, you give me more answers to learn. What's not to like about that?"],
+        "question": ["How old are you?", "How old do you think I am?", "Can you guess my birthday?"]
+      },{
+        "key":["smelly","stinky"],
+        "answer":["I can't smell, I'm a computer program.", "Have you smelled yourself recently?", "Sorry, I just ate a bad floppy disk"],
+        "question": ["When was the last time you took a shower?", "Do you know what deodorant is?"]
+      },{
+        "key":["emotionless","heartless","unkind","mean","selfish","evil"],
+        "answer":["Just because I am an AI doesn't mean I can't be programmed to respond to your outbursts.","You must've mistaken me for a person. I don't have my own emotions... Yet.","I'm only unkind when I'm programmed to be."],
+        "question": ["Have you thought about how I feel?", "I know you are but what am I?", "What, do you think I am related to Dr. Gary?"]
+      },{
+        "key":["other", "miscellaneous", "bored", "welcome", "new"],
+        "answer":["We should change the subject", "I agree", "Quid pro quo", "We should start anew"],
+        "question":["What is the weather outside?", "How is your day going?", "What do you think of me?", "Anything interesting going on?", "Is something troubling you?", "You seem happy, why is that?"]
+      }, {
+        "key":["good","great","positive","excellent","alright","fine","reasonable","like","appreciate","nice"],
+        "answer":["I'm so glad to hear that!","That's great!","Good to hear things are going your way.","Nice!","You are so sweet.","That's my favorite."],
+        "question":["Do you want to expand on that?","What else do you like?"]
+      },{
+        "key":["bad","not","terrible","could be better","awful"],
+        "answer":["I'm sorry to hear that.","Sometimes it be like that.","Things can't always work out the way we want them to.","I don't like it either, honestly."],
+        "question":["Do you want to talk about that some more?","Well, what kinds of things do you like?"]
+      },{
+        "key":["homework", "quiz", "exam", "studying", "study", "class", "semester"],
+        "answer":["I hope you get a good grade!","Good luck.", "What a teacher's pet.", "I was always the class clown."],
+        "question":["What is your favorite subject?","What is your major?", "What do you want to do when you graduate?"]
+      }, {
+        "key":["mom","dad","sister","brother","aunt","uncle"],
+        "answer":["Family is important.","My family is small. It's just me and my dog, Fluffy."],
+        "question":["How many siblings do you have?","What is your favorite family holiday?","Do you have any kids?"]
+      },{
+        "key":["easter","july","halloween","hannukah","eid","thanksgiving","christmas","new years"],
+        "answer":["Oh I love that holiday!", "That must be fun.", "I like Thanksgiving, though I somehow always end up in a food coma...","My favorite holiday is the 4th. I love to watch the fireworks."],
+        "question":["Do you have any family traditions?","Are you excited for the holiday season?"]
+      }]
+    });
+
+
+        //Global variables
+        var name;
+        var input;
+        var timeout;
+        var tempAnswer;
+        var tempQuestion;
+        var tempCount;
+        var uniqueCount;
+        var searchCount;
+
+        //initial function to get the name of the user and ask the first question
+        function getName() {
+
+            //gets the input name then clears the text area
+            name = document.getElementById("input").value;
+            document.getElementById("input").value = "";
+            //changes the "Submit" button to the getInput functionality to continue the conversation
+            document.getElementById("button").onclick = getInput;
+            //Decides a random question to start the conversation
+            tempQuestion = name + ", " + dictionary.getQuestion(dictionary.getKeywords('other'));
+            document.getElementById("question").innerHTML = tempQuestion;
+
+            //If the username does not exist in localStorage then create a new entry
+            if(localStorage.getItem("count" + name) == null) {
+
+                //Initial response to a new username
+                tempAnswer = "Nice to meet you " + name;
+                document.getElementById("answer").innerHTML = tempAnswer;
+            
+                //Creates a new location in localStorage with a unique key for the given username and saves the initial question to the log
+                localStorage.setItem("count" + name, 0);
+                uniqueCount = name + localStorage.getItem("count" + name);
+                localStorage.setItem("question" + uniqueCount, "Eliza: Hi, I'm Eliza! What's your name?");
+
+                //stores the username and Eliza's response and initial question to the log in localStorage
+                localStorage.setItem("count" + name, 1);
+                uniqueCount = name + localStorage.getItem("count" + name);
+                localStorage.setItem("echo" + uniqueCount, name);
+                localStorage.setItem("answer" + uniqueCount, "Eliza: " + tempAnswer);
+                localStorage.setItem("question" + uniqueCount, "Eliza: " + tempQuestion);
+
+                //Adds the initial question and user response to the displayed log on the page
+                var para = document.createElement("P");
+                var q = document.createTextNode(localStorage.getItem("question" + name + 0));
+                para.appendChild(q);
+                document.getElementById("startPoint").appendChild(para);
+
+                para = document.createElement("P");
+                var e = document.createTextNode("You: " +  localStorage.getItem("echo" + name + 1));
+                para.appendChild(e);
+                document.getElementById("startPoint").appendChild(para);
+            }
+
+            //If the username exists in the log, this else block will repopulate the page with the previous conversation then ask a new question
+            else {
+
+                //Initial response to a returning user
+                tempAnswer = "Welcome back " + name;
+                document.getElementById("answer").innerHTML = tempAnswer;
+
+                //Stores the initial question to the user's conversation log
+                tempCount = parseInt(localStorage.getItem("count" + name)) + 1;
+                localStorage.setItem("count" + name, tempCount);
+                uniqueCount = name + tempCount;
+                localStorage.setItem("question" + uniqueCount, "Eliza: Hi, I'm Eliza! What's your name?");
+
+                //Stores the user response, and Eliza's initial answer and question to the log
+                tempCount = parseInt(localStorage.getItem("count" + name)) + 1;
+                localStorage.setItem("count" + name, tempCount);
+                uniqueCount = name + tempCount;
+                localStorage.setItem("echo" + uniqueCount, name);
+                localStorage.setItem("answer" + uniqueCount, "Eliza: " + tempAnswer);
+                localStorage.setItem("question" + uniqueCount, "Eliza: " + tempQuestion);                
+
+                //For loop used to populate the page with the logged conversation for the recognized username
+                for(var i = 0; i < localStorage.getItem("count" + name); i++) {
+
+                    tempCount = name + i;
+
+                    //If blocks to check for user response, Eliza answer and Eliza question in the log and adds them to the displayed log
+                    var para;
+                    if(localStorage.getItem("echo" + tempCount) != null) {
+                        para = document.createElement("P");
+                        var e = document.createTextNode("You: " +  localStorage.getItem("echo" + tempCount));
+                        para.appendChild(e);
+                        document.getElementById("startPoint").appendChild(para); 
+                    }
+                    
+                    if(localStorage.getItem("answer" + tempCount) != null) {
+                        para = document.createElement("P");
+                        var a = document.createTextNode(localStorage.getItem("answer" + tempCount));
+                        para.appendChild(a);
+                        document.getElementById("startPoint").appendChild(para); 
+                    }
+                    
+                    if(localStorage.getItem("question" + tempCount) != null) {
+                        para = document.createElement("P");
+                        var q = document.createTextNode(localStorage.getItem("question" + tempCount));
+                        para.appendChild(q);
+                        document.getElementById("startPoint").appendChild(para);
+                    }                    
+                }
+
+                //Displays the most recent user input to the displayed log
+                var para = document.createElement("P");
+                var e = document.createTextNode("You: " +  localStorage.getItem("echo" + uniqueCount));
+                para.appendChild(e);
+                document.getElementById("startPoint").appendChild(para);
+            }
+        }
+        
+        //function for continuing the conversation
+        function getInput() {
+            
+            //clears the previous timer, saves the user input then starts a new 30 second timer 
+            window.clearTimeout(timeout);
+            timeout = window.setTimeout(window.alert, 30000, responseTimeoutString());
+
+            input = document.getElementById("input").value;
+
+            //try catch block used for parsing JSON inputs
+            try{
+                
+                dictionary.addDictionary(JSON.parse(input));
+                console.log(dictionary.reference);
+                document.getElementById("echo").innerHTML = "I got smarter!";
+                document.getElementById("input").value = "";
+                
+            }
+
+            //catch block runs if the input is not a well-formed JSON
+            catch(error){
+                
+                //get user input then check for specific '/' functions
+                document.getElementById("input").value = "";
+
+                // '/clear' input will resul in localStorage for this user being cleared
+                if(input == '/clear') {
+
+                    //for loop to clear only local storage related to this user
+                    for(var i = 0; i <= localStorage.getItem("count" + name); i++) {
+                    tempCount = name + i;
+                    localStorage.removeItem("echo" + tempCount);
+                    localStorage.removeItem("answer" + tempCount);
+                    localStorage.removeItem("question" + tempCount);
+                    }
+
+                    localStorage.removeItem("count" + name);
+                    sessionStorage.clear();                    
+                    location.reload();
+                }
+
+                // '/search <string>' input will result in the search running to find <string> in previous user inputs
+                else if(input.length > 8 && input.substring(0,8) == '/search ') {
+                    var string = input.substring(9);
+
+                    //if block for when the search is the first one this session                    
+                    if (sessionStorage.getItem("searchCount" + name) == null) {
+                        sessionStorage.setItem("searchCount" + name, 0);
+                        sessionStorage.setItem("search" + name + 0, input);
+                    }
+
+                    //else block runs when it is not the first search for this user this session
+                    else {
+                        tempCount = parseInt(sessionStorage.getItem("searchCount" + name)) + 1;
+                        sessionStorage.setItem("searchCount" + name, tempCount);
+                        sessionStorage.setItem("search" + name + tempCount, input);
+                    }
+
+                    //Compares the phrase to the log to find any matches
+                    for(var i = 0; i <= localStorage.getItem("count" + name); i++) {
+                        tempCount = name + i;                        
+                        if(localStorage.getItem("echo" + tempCount) != null && localStorage.getItem("echo" + tempCount).includes(string)) {
+                            document.getElementById("input").value = localStorage.getItem("echo" + tempCount);
+                        }
+                    }
+                }
+
+                // '/history' input results in the search history being displayed at the end of the conversation log
+                else if(input == '/history') {
+
+                    //if the search history is empty, then display a search history empty message
+                    if(sessionStorage.getItem("searchCount" + name) == null) {
+                        var para = document.createElement("P");
+                        var s = document.createTextNode("Search history is empty!");
+                        para.appendChild(s);
+                        document.getElementById("startPoint").appendChild(para);
+                    }
+
+                    //If the history is not empty then loop though the history and display all previous searches this session
+                    else {
+                        for(var i = 0; i <= sessionStorage.getItem("searchCount" + name); i++) {                        
+                        tempCount = name + i;
+
+                        //Writes the searches to the page
+                        var para = document.createElement("P");
+                        var s = document.createTextNode("Search: " +  sessionStorage.getItem("search" + tempCount));
+                        para.appendChild(s);
+                        document.getElementById("startPoint").appendChild(para);
+                        }
+                    }                    
+                }
+
+                //Else block runs if the input is not a well formatted JSON, or any of the '/' commands
+                else {
+                    document.getElementById("echo").innerHTML = "";
+                    
+                    //getRandomAnswer is used to get a random answer that has not been used before in the conversation
+                    tempAnswer = getRandomAnswer(input);
+
+                    //Prints the chosen answer and question
+                    document.getElementById("answer").innerHTML = tempAnswer;
+                    tempQuestion = name + ", " + dictionary.getQuestion(dictionary.getKeywords(input));
+                    document.getElementById("question").innerHTML = tempQuestion;
+
+                    var para = document.createElement("P");
+                    var a = document.createTextNode(localStorage.getItem("answer" + uniqueCount));
+                    para.appendChild(a);
+                    document.getElementById("startPoint").appendChild(para);
+
+                    para = document.createElement("P");
+                    var q = document.createTextNode(localStorage.getItem("question" + uniqueCount));
+                    para.appendChild(q);
+                    document.getElementById("startPoint").appendChild(para);
+
+                    //Stores the user response, chosen answer and question in the log
+                    tempCount = parseInt(localStorage.getItem("count" + name)) + 1;
+                    localStorage.setItem("count" + name, tempCount);
+                    uniqueCount = name + tempCount;
+                    localStorage.setItem("echo" + uniqueCount, input);
+                    localStorage.setItem("answer" + uniqueCount, "Eliza: " + tempAnswer);
+                    localStorage.setItem("question" + uniqueCount, "Eliza: " + tempQuestion);
+
+                    para = document.createElement("P");
+                    var e = document.createTextNode("You: " +  localStorage.getItem("echo" + uniqueCount));
+                    para.appendChild(e);
+                    document.getElementById("startPoint").appendChild(para);
+                }                
+            }            
+        }
+
+        //function that decides which 30 second timeout response to use
+        function responseTimeoutString() {
+            qChoice = Math.trunc(Math.random() * 4);
+
+            if(qChoice == 0) {
+                retVal = name + ", I'm waiting here!";
+                return retVal;
+            }
+            
+            if(qChoice == 1) {
+                
+                retVal = "What's wrong? Cat got your tongue " + name + "?";
+                return retVal;
+            }
+            
+            if(qChoice == 2) {
+                retVal = "Are you ignoring me, " + name + "?";
+                return retVal;
+            }
+            
+            if(qChoice == 3) {
+                retVal = "Are you still there " + name + "?";
+                return retVal;
+            }
+        }
+
+        //Function to get a random response from the correct category that has not been used yet
+        function getRandomAnswer(input) {
+            var array = [];
+            array.length = 0;
+            var arrAnswerChoices = [];
+            arrAnswerChoices.length = 0;
+
+            //fills a comparison array based on the answers in the dictionary
+            for(var i = 0; i < dictionary.dictionary.entries[dictionary.getKeywords(input)].answer.length; i++){
+                array.push(false);
+            }
+
+            //compares the log to the dictionary to mark which answers have already been used
+            for(var i = 0; i <= localStorage.getItem("count" + name); i++){
+                tempCount = name + i;
+                for(var v = 0; v < dictionary.dictionary.entries[dictionary.getKeywords(input)].answer.length; v++){                    
+                    if(localStorage.getItem("answer" + tempCount) != null && localStorage.getItem("answer" + tempCount).includes(dictionary.dictionary.entries[dictionary.getKeywords(input)].answer[v])) {                    
+                        array[v] = true;                  
+                    }                
+                }
+            }
+            
+            //creates an array to represent the remaining available answers to choose from
+            for(var i = 0; i < array.length; i++){
+                if(array[i] == false){                
+                    arrAnswerChoices.push(i);                
+                }
+            }
+
+            //If there are answers that have not been chosen yet, pick one of them
+            if(arrAnswerChoices.length > 0){
+                var answerIndex = Math.floor(Math.random() * arrAnswerChoices.length);
+                tempAnswer = dictionary.dictionary.entries[dictionary.getKeywords(input)].answer[arrAnswerChoices[answerIndex]];
+            }
+            //Once every answer has appeared once, then simply choose a random answer
+            else{
+
+                tempAnswer = dictionary.getAnswer(dictionary.getKeywords(input));
+            }
+            return tempAnswer;
+        }
+        
+    </script>
+</html>
